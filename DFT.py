@@ -6,7 +6,7 @@ Created on Sun Nov 28 22:45:56 2021
 """
 import numpy as np
 import cv2
-
+from matplotlib import pyplot as plt
 
 def HighPassFilter(img,radius):
     # Circular HPF mask, center circle is 0, remaining all ones
@@ -23,6 +23,11 @@ def HighPassFilter(img,radius):
     x, y = np.ogrid[:rows, :cols]
     mask_area = (x - center[0]) ** 2 + (y - center[1]) ** 2 <= r*r
     mask[mask_area] = 0
+    
+    '''
+    mask = np.ones((rows,cols,2),np.uint8)
+    mask[crow-30:crow+30, ccol-30:ccol+30] = 0
+    '''
     
     return mask
 
@@ -78,6 +83,16 @@ img1 =cv2.normalize(magnitude_spectrum, magnitude_spectrum, 0,255, cv2.NORM_MINM
 cv2.imshow('magnitude_spectrum',img1)
 
 '''
+fig = plt.figure(figsize=(12, 12))
+ax1 = fig.add_subplot(2,2,2)
+ax1.imshow(img)
+ax1.title.set_text('Input Image')
+ax2 = fig.add_subplot(2,2,1)
+ax2.imshow(dft_shift)
+ax2.title.set_text('FFT of image')
+plt.show()
+
+
 phaseimage = np.log(cv2.phase(dft_shift[:,:,0],dft_shift[:,:,1]))
 img2 =cv2.normalize(phaseimage, phaseimage, 0,255, cv2.NORM_MINMAX, cv2.CV_8UC1)
 cv2.imshow('phase image',img2)
